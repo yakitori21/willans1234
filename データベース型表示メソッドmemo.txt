@@ -1,0 +1,90 @@
+// 懸念点について
+・データベースに変化が合った場合の対処について
+現状、データベースにあるデータが確定している時の処理しか想定できていない。
+データベースの列情報や総数。列ごとのデータ・タイプなどを取得することで
+いかなるデータでも読み込めるよう調整を行う必要があるかどうか…
+
+・表示とは関係ないがモジュール間呼び出しについて
+メイン→操作→通信→｜データベース｜
+	↓      |
+	表示←---
+
+ユーザー操作を担当するモジュールが抜けていることがわかった。
+データベース取得前に操作から表示モジュールを呼ぶ場合にエラー処理が必要。
+
+-----------------------------------------------------------------------------------------------------
+・対策(表示クラス)
+
+// 予め入れ物を所持
+private ResultSet res = null;	// 参照値なし
+public void setResult(ResultSet r){this.res = r;};
+
+// 呼び出し時に確認メソッドを実行
+public boorean IsSetResult(){
+	if(res==null){
+		System.outprintln("データベースの値が設定されていません。データベースからデータを取得してください。")
+		return false;
+	}
+	return true;
+}
+
+
+// memo
+
+◯ResultSetMetaDataオブジェクト
+
+ResultSetMetaData メソッドでは、以下のタイプの情報を確認できます。
+・ResultSet の列の数
+・ResultSet の基礎表の修飾子
+・列に関する情報 (データ・タイプ、長さ、精度、スケール、NULL 可能など)
+・列が読み取り専用かどうか
+
+◯手順
+
+・Statementを作成し、executeQuery メソッドを呼び出して、
+表の照会の ResultSet を生成したら
+以下の基本手順を実行して、ResultSet の内容を確認します。
+※ResultSetはStatement.executeQueryを呼んでいない状態での参照はNG
+最悪な場合も想定しResultSet = nullで初期化。
+
+・ResultSet オブジェクトに対して getMetaData メソッドを呼び出し、
+ResultSetMetaData オブジェクトを作成します。
+※エラーチェック(ResultSet==null)
+
+
+・getColumnCount メソッドを呼び出して、ResultSet の列の数を確認します。
+
+・ResultSet の各列ごとに ResultSetMetaData メソッドを呼び出して、
+列の特性を確認します。
+
+・ResultSetMetaData.getColumnName 呼び出しの結果は、データ・サーバーに
+関して カタログに格納されている列名情報を反映しています。
+
+
+//------------------------------------------------
+// 表示モジュールについて
+//
+// 表示モジュールは通信モジュールから送られる
+// データセットを表示していくモジュールとする
+//------------------------------------------------
+
+// 通信モジュールで取得 
+
+rs : ResultSet型(SQLデータ取得) 
+rsmd : ResultSetMetaData型 
+
+// オブジェクトの列の数、型、およびプロパティーを取得
+rsmd = rs.getMetaData();
+
+// フィールド名を取得
+for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+   System.out.println(rsmd.getColumnName(i));
+}
+getColumnCount() フィールド数を取得
+getColumnName() フィールド名を取得
+
+while(rs.next()){
+	// データを一行読み取る処理を書く(現状商品Noと商品名を取得する処理を記載)
+	String No = rs.getString("商品No");
+	String Name = rs.getString("商品名");
+}
