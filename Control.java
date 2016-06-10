@@ -12,156 +12,173 @@ import connect.Connect3;
 
 /*
 @author testakaunto 2016/6/3
-@editer yakitori21	2016/6/4
+@editor yakitori21	2016/6/4
 @editor testakaunto 2016/6/7
-@editer yakitori21	2016/6/9
+@editor yakitori21	2016/6/9
 @editor testakaunto 2016/6/9
+@editor yakitori21	2016/6/10
 */
 
 //@editor testakaunto 2016/6/9
-//ResultSetMetaData resultsetmetadata -> •Ï”–¼resultsetmetadata‚É•ÏX
+//ResultSetMetaData resultsetmetadata -> å¤‰æ•°åresultsetmetadataã«å¤‰æ›´
 public class Control{
-	/* ƒtƒB[ƒ‹ƒh */
-	private ResultSetMetaData resultsetmetadata;	// ƒf[ƒ^ƒx[ƒX‚ÌƒJƒ‰ƒ€î•ñ‚ğ‚Â
-	private ItemManageMain main;	// I—¹ƒtƒ‰ƒO§Œä‚·‚éƒCƒ“ƒXƒ^ƒ“ƒX
-	private BufferedReader reader;	// •W€“ü—Í—p
-	private int windowNo;			// •\¦‚·‚é‰æ–Ê”Ô†
-	private Connect3 connect;		// ’ÊMƒ‚ƒWƒ…[ƒ‹
+	/* ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ */
+	private ResultSetMetaData resultsetmetadata;	// ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã®ã‚«ãƒ©ãƒ æƒ…å ±ã‚’æŒã¤
+	private ItemManageMain main;	// çµ‚äº†ãƒ•ãƒ©ã‚°åˆ¶å¾¡ã™ã‚‹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+	private BufferedReader reader;	// æ¨™æº–å…¥åŠ›ç”¨
+	private int windowNo;			// è¡¨ç¤ºã™ã‚‹ç”»é¢ç•ªå·
+	private Connect3 connect;		// é€šä¿¡ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«
 
 	/*
 	------------------------------------------------------------
 	@editor testakaunto 2016/6/9
-	search()‚Ì’Ç‰Á‚É‚æ‚èAŠeƒƒ\ƒbƒh‚Éthrows SQLException‚ğ’Ç‰Á
+	search()ã®è¿½åŠ ã«ã‚ˆã‚Šã€å„ãƒ¡ã‚½ãƒƒãƒ‰ã«throws SQLExceptionã‚’è¿½åŠ 
 	------------------------------------------------------------
 	*/
 
 
 	//-----------------------------------------------------------------------
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	//
 	//@author yakitori21 2016/6/4
-	// ˆø”	m_ins :	ƒƒCƒ“ƒ‹[ƒv‚ÌI—¹ƒtƒ‰ƒO‚ğ§Œä‚·‚é‚½‚ß‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
-	// 		c_ins : ƒf[ƒ^ƒx[ƒXî•ñ‚ğæ“¾‚·‚éˆ×‚Ì’ÊMƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
+	// å¼•æ•°	m_ins :	ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—ã®çµ‚äº†ãƒ•ãƒ©ã‚°ã‚’åˆ¶å¾¡ã™ã‚‹ãŸã‚ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+	// 		c_ins : ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹æƒ…å ±ã‚’å–å¾—ã™ã‚‹ç‚ºã®é€šä¿¡ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	//@editor testakaunto 2016/6/9
 	//-----------------------------------------------------------------------
 	public Control(ItemManageMain m_ins/*,Connect c_ins*/){
-		// •W€“ü—ÍƒIƒuƒWƒFƒNƒg‚ğì¬
+		// æ¨™æº–å…¥åŠ›ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½œæˆ
 		this.reader = new BufferedReader(new InputStreamReader(System.in));
-		this.windowNo = TOPMENU; // ƒgƒbƒvƒƒjƒ…[‚Ì”Ô†‚ğİ’èB
+		this.windowNo = TOPMENU; // ãƒˆãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ç•ªå·ã‚’è¨­å®šã€‚
 
-		// ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ“o˜^
-		this.main = m_ins;		// ƒƒCƒ“ƒNƒ‰ƒX
-		this.connect = new Connect3();	// ƒf[ƒ^ƒx[ƒX’ÊMƒNƒ‰ƒX
+		// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç™»éŒ²
+		this.main = m_ins;		// ãƒ¡ã‚¤ãƒ³ã‚¯ãƒ©ã‚¹
+		this.connect = new Connect3();	// ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹é€šä¿¡ã‚¯ãƒ©ã‚¹
 		
-		// ƒCƒ“ƒXƒ^ƒ“ƒX‰Šú‰»
-		this.resultsetmetadata = null;		// ResultSetMetaData‚ğ‰Šú‰»
+		// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åˆæœŸåŒ–
+		this.resultsetmetadata = null;		// ResultSetMetaDataã‚’åˆæœŸåŒ–
 	}
 	
-	/* ’è” */
+	/* å®šæ•° */
 
-	// ‰æ–Ê‘€ì
-	private static final int TOPMENU = 0;		// ƒgƒbƒvƒƒjƒ…:0
-	private static final int TABLE_SELECT = 1;	// ƒe[ƒuƒ‹‘I‘ğ‰æ–Ê:1
-	private static final int ADD_DATA = 2;		// ƒf[ƒ^’Ç‰Á‰æ–Ê:2
+	// ç”»é¢æ“ä½œ
+	private static final int TOP_MENU = 0;		// ãƒˆãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥:0
+	private static final int TABLE_SELECT = 1;	// ãƒ†ãƒ¼ãƒ–ãƒ«é¸æŠç”»é¢:1
+	private static final int ADD_MENU = 2;		// ãƒ‡ãƒ¼ã‚¿è¿½åŠ ç”»é¢:2
+	private static final int SERACH_MENU = 3;	// æ¤œç´¢ç”»é¢:3
+	private static final int DELETE_MENU = 4;	// å‰Šé™¤ç”»é¢:4
+	private static final int UPDATE_MENU = 5;	// æ›´æ–°ç”»é¢:5
 
-	// ‹@”\
-	private static final int END = 0;
-	private static final int ALL_DRAW = 1;
-	private static final int ADD = 2;
-	private static final int SERACH = 3;
+	// æ©Ÿèƒ½
+	private static final int END = 0;			// çµ‚äº†
+	private static final int ALL_DRAW = 1;		// å…¨è¡¨ç¤º
+	private static final int ADD = 2;			// è¿½åŠ 
+	private static final int SERACH = 3;		// æ¤œç´¢
+	private static final int DELETE = 4;		// å‰Šé™¤
+	private static final int UPDATE = 5;		// æ›´æ–°
 	
-	/* ƒƒ\ƒbƒh */
+	/* ãƒ¡ã‚½ãƒƒãƒ‰ */
 	
 	//-------------------------------------------------------
-	// ‰æ–Ê”Ô†‚É‰‚¶‚Ä•\¦‚ğ•ª‚¯‚é
-	// ƒƒCƒ“ƒ‹[ƒv‚ª‚±‚Ìƒƒ\ƒbƒh‚ğŒÄ‚Ño‚µ
-	// ‰æ–Ê‚ğXV‚·‚é
+	// ç”»é¢ç•ªå·ã«å¿œã˜ã¦è¡¨ç¤ºã‚’åˆ†ã‘ã‚‹
+	// ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—ãŒã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã‚’å‘¼ã³å‡ºã—
+	// ç”»é¢ã‚’æ›´æ–°ã™ã‚‹
 	//
 	//@author yakitori21 2016/6/4
 	//@editor testakaunto 2016/6/10
-	//case SERACH‚Ìsearch()‚ÉSQL•¶‚ğó‚¯‚éString sql‚Æ
-	//connectDB()ATOPMENU‚É–ß‚éˆ—‚ğ’Ç‰Á
+	//case SERACHã®search()ã«SQLæ–‡ã‚’å—ã‘ã‚‹String sqlã¨
+	//connectDB()ã€TOPMENUã«æˆ»ã‚‹å‡¦ç†ã‚’è¿½åŠ 
 	//-------------------------------------------------------
 	public void changeWindow() throws SQLException , IOException {
-		// ‰æ–Ê”Ô†‚ğ‚à‚Æ‚É‰æ–Ê‚ğŒÄ‚Ño‚·B
+		String sql = "";
+		// ç”»é¢ç•ªå·ã‚’ã‚‚ã¨ã«ç”»é¢ã‚’å‘¼ã³å‡ºã™ã€‚
 		switch(this.windowNo){
-			case TOPMENU:	// ƒgƒbƒvƒƒjƒ…[ 
+			case TOP_MENU:	// ãƒˆãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼ 
 				this.topMenu();	
 				break;	
-			case TABLE_SELECT:	// ƒe[ƒuƒ‹ƒZƒŒƒNƒg‰æ–Ê
+			case TABLE_SELECT:	// ãƒ†ãƒ¼ãƒ–ãƒ«ã‚»ãƒ¬ã‚¯ãƒˆç”»é¢
 				this.selectTable();
 				break;
-			case ADD_DATA:	// ƒf[ƒ^’Ç‰Á‰æ–Ê
-				System.out.println( "*****ƒe[ƒuƒ‹–¼‚ª•ÏX‚³‚ê‚Ä‚¢‚é‚©’ˆÓ‚µ‚Ä‚­‚¾‚³‚¢II*****" );
-				this.addData();
+			case ADD_MENU:	// ãƒ‡ãƒ¼ã‚¿è¿½åŠ ç”»é¢
+				System.out.println( "*****ãƒ†ãƒ¼ãƒ–ãƒ«åãŒå¤‰æ›´ã•ã‚Œã¦ã„ã‚‹ã‹æ³¨æ„ã—ã¦ãã ã•ã„ï¼ï¼*****" );
+				sql = this.addData();
 				break;
-			case SERACH:
-				String sql = this.search();
+			case SERACH_MENU:	// æ¤œç´¢ç”»é¢
+				sql = this.search();
 				connect.setSql( sql );
 				connect.connectDB();
-				
+				break;
+			case DELETE_MENU:	// å‰Šé™¤ç”»é¢
+				break;
+			case UPDATE_MENU:	// æ›´æ–°ç”»é¢
+				this.update();
 				break;
 			default:
-				System.out.println("Error:‰æ–Ê‘JˆÚˆÙí‚É‚æ‚èƒVƒXƒeƒ€‚ğI—¹‚µ‚Ü‚·B");
-				this.main.setLoopEnd();	// ƒƒCƒ“ƒ‹[ƒvI—¹
+				System.out.println("Error:ç”»é¢é·ç§»ç•°å¸¸ã«ã‚ˆã‚Šã‚·ã‚¹ãƒ†ãƒ ã‚’çµ‚äº†ã—ã¾ã™ã€‚");
+				this.main.setLoopEnd();	// ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—çµ‚äº†
 				break;
 		}
 	}
 
 	//---------------------------------
-	// ƒgƒbƒvƒƒjƒ…‚Å‚Ì‘€ì
+	// ãƒˆãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ã§ã®æ“ä½œ
 	// 
 	//@author yakitori21 2016/6/4
 	//@editor testakaunto 2016/6/7
-	//case ALL_DRAW ‚ÅConnect2‚ğŒÄ‚Ño‚µ
-	//sql‚ğƒZƒbƒg‚·‚éƒR[ƒh‚ğ’Ç‰Á
+	//case ALL_DRAW ã§Connect2ã‚’å‘¼ã³å‡ºã—
+	//sqlã‚’ã‚»ãƒƒãƒˆã™ã‚‹ã‚³ãƒ¼ãƒ‰ã‚’è¿½åŠ 
 	//---------------------------------
 	public void topMenu() {
-		String line = "";	// •W€“ü—Í‚ğó‚¯æ‚é•Ï”
+		String line = "";	// æ¨™æº–å…¥åŠ›ã‚’å—ã‘å–ã‚‹å¤‰æ•°
 		System.out.println();
-		System.out.println( "ƒƒjƒ…[‚ğ‘I‚ñ‚Å‚­‚¾‚³‚¢B" );
+		System.out.println( "ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’é¸ã‚“ã§ãã ã•ã„ã€‚" );
 		System.out.println();
-		System.out.println( "0F¤•iŠÇ—ƒVƒXƒeƒ€‚ÌI—¹" );
-		System.out.println( "1Fƒe[ƒuƒ‹‚Ì¤•i‚ğ‘S‚Ä•\¦‚·‚é" );
-		System.out.println( "2Fƒe[ƒuƒ‹‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚é" );
-		System.out.println( "3FğŒ‚ğw’è‚µ‚Äƒe[ƒuƒ‹’†‚Ìƒf[ƒ^‚ğ•\¦‚·‚é" );
+		System.out.println( "0ï¼šå•†å“ç®¡ç†ã‚·ã‚¹ãƒ†ãƒ ã®çµ‚äº†" );
+		System.out.println( "1ï¼šãƒ†ãƒ¼ãƒ–ãƒ«ã®å•†å“ã‚’å…¨ã¦è¡¨ç¤ºã™ã‚‹" );
+		System.out.println( "2ï¼šãƒ†ãƒ¼ãƒ–ãƒ«ã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹" );
+		System.out.println( "3ï¼šæ¡ä»¶ã‚’æŒ‡å®šã—ã¦ãƒ†ãƒ¼ãƒ–ãƒ«ä¸­ã®ãƒ‡ãƒ¼ã‚¿ã‚’è¡¨ç¤ºã™ã‚‹" );
 		System.out.println();
 		
-		// “ü—Í‚ªŠ®—¹‚³‚ê‚é‚Ü‚Å
+		// å…¥åŠ›ãŒå®Œäº†ã•ã‚Œã‚‹ã¾ã§
 		while(true){
 			try{
-				if(( line = this.reader.readLine())==null ){	// “ü—Í
-					System.out.println("“ü—ÍƒLƒƒƒ“ƒZƒ‹‚³‚ê‚Ü‚µ‚½BƒvƒƒOƒ‰ƒ€‚ğI—¹‚µ‚Ü‚·");
+				if(( line = this.reader.readLine())==null ){	// å…¥åŠ›
+					System.out.println("å…¥åŠ›ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã•ã‚Œã¾ã—ãŸã€‚ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚’çµ‚äº†ã—ã¾ã™");
 					this.main.setLoopEnd();
 					break;
 				}
 
-				// “ü—Í§ŒÀ[0-3]
+				// å…¥åŠ›åˆ¶é™[0-3]
 				if(line.matches("[0-3]")){
-					int input = Integer.parseInt(line);	// ”’lŒ^•ÏŠ·
-					// “ü—Í’l‚É‰‚¶‚Äˆ—‚ğ•ªŠò
+					int input = Integer.parseInt(line);	// æ•°å€¤å‹å¤‰æ›
+					// å…¥åŠ›å€¤ã«å¿œã˜ã¦å‡¦ç†ã‚’åˆ†å²
 					switch(input){
-						case END:	// I—¹
-							this.main.setLoopEnd();  // ƒƒCƒ“ƒ‹[ƒv‚ğ’Eo‚·‚éƒtƒ‰ƒO§Œä
+						case END:	// çµ‚äº†
+							this.main.setLoopEnd();  // ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—ã‚’è„±å‡ºã™ã‚‹ãƒ•ãƒ©ã‚°åˆ¶å¾¡
 							break;
-						case ALL_DRAW: 	// ƒe[ƒuƒ‹‚Ì¤•i‚ğ‘S‚Ä•\¦‚·‚é
+						case ALL_DRAW: 	// ãƒ†ãƒ¼ãƒ–ãƒ«ã®å•†å“ã‚’å…¨ã¦è¡¨ç¤ºã™ã‚‹
 							String sql = "SELECT * FROM soft;";
 							System.out.println(sql);
-							this.connect.setSql(sql);	// ’ÊMƒNƒ‰ƒX‚ÉSQL•¶‚ğƒZƒbƒg
-							this.connect.connectDB();	// ƒf[ƒ^ƒx[ƒX‚ÉSQL•¶‚ğ‘—M
+							this.connect.setSql(sql);	// é€šä¿¡ã‚¯ãƒ©ã‚¹ã«SQLæ–‡ã‚’ã‚»ãƒƒãƒˆ
+							this.connect.connectDB();	// ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã«SQLæ–‡ã‚’é€ä¿¡
 							break;
-						case ADD:	// ’Ç‰Á‹@”\
-							this.windowNo = ADD_DATA;	// ‰æ–Ê•ÏX
+						case ADD:	// è¿½åŠ æ©Ÿèƒ½
+							this.windowNo = ADD_MENU;	// ç”»é¢å¤‰æ›´
 							break;
-						case SERACH: // ’ŠoEŒŸõ‹@”\
-							this.windowNo = SERACH;		// ‰æ–Ê•ÏX
+						case SERACH: // æŠ½å‡ºãƒ»æ¤œç´¢æ©Ÿèƒ½
+							this.windowNo = SERACH_MENU;	// ç”»é¢å¤‰æ›´
 							break;
-						default:	// –‘O‚É’e‚¢‚Ä‚é‚¯‚Çˆê‰
+						case DELETE:	// å‰Šé™¤æ©Ÿèƒ½
+							//this.windowNo = DELETE_MENU;	
+							System.out.println("ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®åˆ‡ã‚Šæ›¿ãˆå‡¦ç†ã‚’æ›¸ã");
+						case UPDATE:
+							this.windowNo = UPDATE_MENU;
+							break;
+						default:	// äº‹å‰ã«å¼¾ã„ã¦ã‚‹ã‘ã©ä¸€å¿œ
 							break;
 					}
 					break;
 				}else{
-					System.out.println("“ü—Í’l‚ª³‚µ‚­‚ ‚è‚Ü‚¹‚ñB0-3‚Ì”’l‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢");
+					System.out.println("å…¥åŠ›å€¤ãŒæ­£ã—ãã‚ã‚Šã¾ã›ã‚“ã€‚0-3ã®æ•°å€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„");
 				}
 			}catch(NumberFormatException e){
 				System.out.println(e);
@@ -172,23 +189,23 @@ public class Control{
 	}
 
 	//-------------------------------
-	// ƒe[ƒuƒ‹‘I‘ğ‰æ–Ê-–¢À‘•(¦)
+	// ãƒ†ãƒ¼ãƒ–ãƒ«é¸æŠç”»é¢-æœªå®Ÿè£…(â€»)
 	// 
 	//@author yakitori21 2016/6/4
 	//-------------------------------
 	public void selectTable(){
 		String line = "";
-		System.out.println("ƒe[ƒuƒ‹‰æ–Ê‚ğ•\¦‚µ‚Ü‚µ‚½B");
+		System.out.println("ãƒ†ãƒ¼ãƒ–ãƒ«ç”»é¢ã‚’è¡¨ç¤ºã—ã¾ã—ãŸã€‚");
 
 		try{
 			while(true){
 				line = reader.readLine();
-				if(line == null){	// ƒ†[ƒU[‚ª“ü—Í‚ğƒLƒƒƒ“ƒZƒ‹
-					System.out.println("“ü—Í‚ªƒLƒƒƒ“ƒZƒ‹‚³‚ê‚Ü‚µ‚½Bƒgƒbƒvƒƒjƒ…[‚ÖˆÚ“®‚µ‚Ü‚·");
-					windowNo = TOPMENU;
+				if(line == null){	// ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒå…¥åŠ›ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+					System.out.println("å…¥åŠ›ãŒã‚­ãƒ£ãƒ³ã‚»ãƒ«ã•ã‚Œã¾ã—ãŸã€‚ãƒˆãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã¸ç§»å‹•ã—ã¾ã™");
+					windowNo = TOP_MENU;
 				}
-				System.out.println("“ü—Í‚ğŠm”F‚µ‚Ü‚µ‚½Bƒgƒbƒvƒƒjƒ…[‚É–ß‚è‚Ü‚·");
-				windowNo = TOPMENU;
+				System.out.println("å…¥åŠ›ã‚’ç¢ºèªã—ã¾ã—ãŸã€‚ãƒˆãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«æˆ»ã‚Šã¾ã™");
+				windowNo = TOP_MENU;
 				break;
 			}
 		}catch(IOException e){
@@ -197,160 +214,161 @@ public class Control{
 	}
 
 	//-------------------------------------------------------------
-	// ƒf[ƒ^’Ç‰Á‰æ–Ê
-	// ƒ†[ƒU[‚ª“ü—Í‚ğs‚¢A“ü—Íƒf[ƒ^‚ğƒf[ƒ^ƒx[ƒX‚É“o˜^‚·‚éB
-	// “à•”‚Å“ü—Íƒf[ƒ^‚ğì¬‚µConnectƒIƒuƒWƒFƒNƒg‚É‘—M‚·‚é
+	// ãƒ‡ãƒ¼ã‚¿è¿½åŠ ç”»é¢
+	// ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒå…¥åŠ›ã‚’è¡Œã„ã€å…¥åŠ›ãƒ‡ãƒ¼ã‚¿ã‚’ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã«ç™»éŒ²ã™ã‚‹ã€‚
+	// å†…éƒ¨ã§å…¥åŠ›ãƒ‡ãƒ¼ã‚¿ã‚’ä½œæˆã—Connectã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«é€ä¿¡ã™ã‚‹
 	//@author yakitori21 2016/6/4
-	//@editer yakitori21 2016/6/9
+	//@editor yakitori21 2016/6/9
 	//-------------------------------------------------------------
-	public void addData() throws SQLException , IOException {
+	public String addData() throws SQLException , IOException {
 		String sql = "INSERT INTO soft2 VALUES(";
-		System.out.println("Itemƒe[ƒuƒ‹‚Éƒf[ƒ^‚ğ’Ç‰Á‚µ‚Ü‚·B");
+		System.out.println("Itemãƒ†ãƒ¼ãƒ–ãƒ«ã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã—ã¾ã™ã€‚");
 		System.out.println("");
 
-		resultsetmetadata = connect.getMetaData();	// ƒJƒ‰ƒ€î•ñ‚ğæ“¾
+		resultsetmetadata = connect.getMetaData();	// ã‚«ãƒ©ãƒ æƒ…å ±ã‚’å–å¾—
 		
-		// ƒJƒ‰ƒ€–¼‚ğæ“¾
-		label:	// ƒ‰ƒxƒ‹break
+		// ã‚«ãƒ©ãƒ åã‚’å–å¾—
+		label:	// ãƒ©ãƒ™ãƒ«break
 		for (int i=1; i<=this.resultsetmetadata.getColumnCount(); i++){
 			String columnName = this.resultsetmetadata.getColumnName(i);
-			System.out.println("ƒJƒ‰ƒ€–¼:"+relabelString(columnName)+"‚É’Ç‰Á‚·‚éƒf[ƒ^‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢");
+			System.out.println("ã‚«ãƒ©ãƒ å:"+relabelString(columnName)+"ãƒ‡ãƒ¼ã‚¿ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„");
 			
-			// “KØ‚Èƒf[ƒ^‚ğ“ü—Í‚µ‚È‚¢‚©‚¬‚èŒJ‚è•Ô‚·
+			// é©åˆ‡ãªãƒ‡ãƒ¼ã‚¿ã‚’å…¥åŠ›ã—ãªã„ã‹ãã‚Šç¹°ã‚Šè¿”ã™
 			while(true){
 				String line = reader.readLine();
-				if(line == null){	// ƒ†[ƒU[‚ª“ü—Í‚ğƒLƒƒƒ“ƒZƒ‹
-					System.out.println("“ü—Í‚ªƒLƒƒƒ“ƒZƒ‹‚³‚ê‚Ü‚µ‚½Bƒgƒbƒvƒƒjƒ…[‚ÖˆÚ“®‚µ‚Ü‚·");
-					windowNo = TOPMENU;
-					break label;	// ƒ‰ƒxƒ‹break‚Åfor•¶©‘Ì‚ğ’EoB
+				if(line == null){	// ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒå…¥åŠ›ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+					System.out.println("å…¥åŠ›ãŒã‚­ãƒ£ãƒ³ã‚»ãƒ«ã•ã‚Œã¾ã—ãŸã€‚ãƒˆãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã¸ç§»å‹•ã—ã¾ã™");
+					this.windowNo = TOP_MENU;
+					break label;	// ãƒ©ãƒ™ãƒ«breakã§foræ–‡è‡ªä½“ã‚’è„±å‡ºã€‚
 				}
-				if(this.chkConsistency(columnName,line)){	// •¶š“ü—Í‚ª³‚µ‚¢‚©H
-					if(i!=resultsetmetadata.getColumnCount()){	// ÅŒã‚ÌƒJƒ‰ƒ€“ü—Í‚Å‚È‚¢‚È‚ç
-						sql = "\'"+line+"\' ,";
+				if(this.chkConsistency(columnName,line)){	// æ–‡å­—å…¥åŠ›ãŒæ­£ã—ã„ã‹ï¼Ÿ
+					if(i!=resultsetmetadata.getColumnCount()){	// æœ€å¾Œã®ã‚«ãƒ©ãƒ å…¥åŠ›ã§ãªã„ãªã‚‰
+						sql += "\'"+line+"\' ,";
 					}else{
-						sql = "\'"+line+"\'";
+						sql += "\'"+line+"\'";
 					}
-					break;	// “ü—Í‚Ìˆê„I—¹B
+					break;	// å…¥åŠ›ã®ä¸€å·¡çµ‚äº†ã€‚
 				}
 			}
 		}
-		sql = sql+");";	// SQL•¶‚ÌI’[‚ğİ’è 
+		sql = sql+");";	// SQLæ–‡ã®çµ‚ç«¯ã‚’è¨­å®š 
 		System.out.println(sql);
-		/*this.connect.setSql(sql);
-		this.connect.connectDB();*/
+
+		this.windowNo = TOP_MENU;	// è¿½åŠ å¾Œã¯ãƒˆãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«é·ç§»
+		return sql;					// ä½œæˆã—ãŸSQLæ–‡ã‚’è¿”ã™ã€‚	
 	}
 
 	/*
 	--------------------------------------------------
 	@author testakaunto 2016/6/8
-	ƒf[ƒ^‚ğ’Šo‚µ‚Ä•\¦‚·‚éSQL•¶
-	‚ğì¬‚·‚éƒƒ\ƒbƒh‚ğì¬‚µ‚Ü‚µ‚½B
+	ãƒ‡ãƒ¼ã‚¿ã‚’æŠ½å‡ºã—ã¦è¡¨ç¤ºã™ã‚‹SQLæ–‡
+	ã‚’ä½œæˆã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰ã‚’ä½œæˆã—ã¾ã—ãŸã€‚
 	--------------------------------------------------
 	*/
 	
 	public String search() throws SQLException {
-		int k = 0;//ƒJƒEƒ“ƒ^•Ï”
+		int k = 0;//ã‚«ã‚¦ãƒ³ã‚¿å¤‰æ•°
 		
 		boolean searchloop = true;
 		String sql = "SELECT";
-		String selectcolumn = "‘I‘ğ‚µ‚½€–ÚF";
+		String selectcolumn = "é¸æŠã—ãŸé …ç›®ï¼š";
 		//ResultSet resultset = connect.getResultSet();
 		resultsetmetadata = connect.getMetaData();
-		//•\¦—p‚ÌƒJƒ‰ƒ€–¼‚ğ“ü‚ê‚écolumnlist‚ÆÀÛ‚ÌƒJƒ‰ƒ€–¼‚ğ“ü‚ê‚étruecolumnlist‚ğì¬
+		//è¡¨ç¤ºç”¨ã®ã‚«ãƒ©ãƒ åã‚’å…¥ã‚Œã‚‹columnlistã¨å®Ÿéš›ã®ã‚«ãƒ©ãƒ åã‚’å…¥ã‚Œã‚‹truecolumnlistã‚’ä½œæˆ
 		List<String> columnlist = new ArrayList<String>();
 		List<String> truecolumnlist = new ArrayList<String>();
 		
-		//columnlist‚É•\¦—p‚ÌƒJƒ‰ƒ€–¼‚ğ“ü‚ê‚Ü‚·B
-		columnlist.add( "¤•iID" );
-		columnlist.add( "¤•i–¼" );
-		columnlist.add( "ƒˆƒ~ƒKƒi" );
-		columnlist.add( "‰¿Ši" );
-		columnlist.add( "ƒWƒƒƒ“ƒ‹" );
-		columnlist.add( "”­”„“ú" );
-		columnlist.add( "ƒvƒ‰ƒbƒgƒtƒH[ƒ€" );
-		columnlist.add( "ó‘Ô" );
-		columnlist.add( "İŒÉ" );
+		//columnlistã«è¡¨ç¤ºç”¨ã®ã‚«ãƒ©ãƒ åã‚’å…¥ã‚Œã¾ã™ã€‚
+		columnlist.add( "å•†å“ID" );
+		columnlist.add( "å•†å“å" );
+		columnlist.add( "ãƒ¨ãƒŸã‚¬ãƒŠ" );
+		columnlist.add( "ä¾¡æ ¼" );
+		columnlist.add( "ã‚¸ãƒ£ãƒ³ãƒ«" );
+		columnlist.add( "ç™ºå£²æ—¥" );
+		columnlist.add( "ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ " );
+		columnlist.add( "çŠ¶æ…‹" );
+		columnlist.add( "åœ¨åº«" );
 		
-		//truecolumnlist‚ÉÀÛ‚ÌƒJƒ‰ƒ€–¼‚ğ“ü‚ê‚Ü‚·B
+		//truecolumnlistã«å®Ÿéš›ã®ã‚«ãƒ©ãƒ åã‚’å…¥ã‚Œã¾ã™ã€‚
 		for( int l = 1 ; l < resultsetmetadata.getColumnCount() + 1 ; l++ ){
 			truecolumnlist.add( resultsetmetadata.getColumnName(l) );
 		}
-		//I—¹‚ğ‘I‘ğ‚·‚é‚Æƒ‹[ƒv‚ğ”²‚¯‚Ü‚·B
+		//çµ‚äº†ã‚’é¸æŠã™ã‚‹ã¨ãƒ«ãƒ¼ãƒ—ã‚’æŠœã‘ã¾ã™ã€‚
 		while( searchloop ){
-			if( k < 1 ){//ƒ‹[ƒv‚ª1‰ñ–Ú‚©‚Ç‚¤‚©‚Å•\¦‚ğ•Ï‚¦‚Ü‚·
-				System.out.println( "’Šo‚·‚éƒf[ƒ^‚Ì€–Ú‚ğ‘I‚ÑA”š‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B" );
+			if( k < 1 ){//ãƒ«ãƒ¼ãƒ—ãŒ1å›ç›®ã‹ã©ã†ã‹ã§è¡¨ç¤ºã‚’å¤‰ãˆã¾ã™
+				System.out.println( "æŠ½å‡ºã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã®é …ç›®ã‚’é¸ã³ã€æ•°å­—ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚" );
 			}else{
-				System.out.println("‘¼‚É’Šo‚·‚éƒf[ƒ^€–Ú‚ª‚ ‚ê‚ÎA”š‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B");
-				System.out.println( selectcolumn );//Šù‚É‘I‘ğ‚µ‚½ƒf[ƒ^‚ğ•\¦‚µ‚Ü‚·B
+				System.out.println("ä»–ã«æŠ½å‡ºã™ã‚‹ãƒ‡ãƒ¼ã‚¿é …ç›®ãŒã‚ã‚Œã°ã€æ•°å­—ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚");
+				System.out.println( selectcolumn );//æ—¢ã«é¸æŠã—ãŸãƒ‡ãƒ¼ã‚¿ã‚’è¡¨ç¤ºã—ã¾ã™ã€‚
 			}
-			for( int i = 0 ; i < columnlist.size() ; i++ ){//•\¦—pƒJƒ‰ƒ€–¼‚ğ”š‚ğ•t‚¯‚Ä•\¦‚µ‚Ü‚·
-				System.out.println( "" + i + "F" + columnlist.get(i));
+			for( int i = 0 ; i < columnlist.size() ; i++ ){//è¡¨ç¤ºç”¨ã‚«ãƒ©ãƒ åã‚’æ•°å­—ã‚’ä»˜ã‘ã¦è¡¨ç¤ºã—ã¾ã™
+				System.out.println( "" + i + "ï¼š" + columnlist.get(i));
 			}
-			//I—¹‚ÍÅŒã‚ÌƒJƒ‰ƒ€–¼‚É•\¦‚µ‚Ü‚·B
-			System.out.println( "" + columnlist.size() + "F" + "ƒ‘I‘ğI—¹„" );
+			//çµ‚äº†ã¯æœ€å¾Œã®ã‚«ãƒ©ãƒ åã«è¡¨ç¤ºã—ã¾ã™ã€‚
+			System.out.println( "" + columnlist.size() + "ï¼š" + "ï¼œé¸æŠçµ‚äº†ï¼" );
 			try{
 				String str = reader.readLine();
 				int num = Integer.parseInt( str );
-				//“ü—Íƒ`ƒFƒbƒN‚ğ‚µ‚È‚ª‚çsql‚ÉƒJƒ‰ƒ€–¼‚ğ’Ç‰Á‚µ‚Ü‚·B
+				//å…¥åŠ›ãƒã‚§ãƒƒã‚¯ã‚’ã—ãªãŒã‚‰sqlã«ã‚«ãƒ©ãƒ åã‚’è¿½åŠ ã—ã¾ã™ã€‚
 				if( num < 0 || num > columnlist.size() ){
-					System.out.println( "“ü—Í‚³‚ê‚½”’l‚ª³‚µ‚­‚ ‚è‚Ü‚¹‚ñB“ü—Í‚ğ‚â‚è’¼‚µ‚Ä‚­‚¾‚³‚¢B" );
+					System.out.println( "å…¥åŠ›ã•ã‚ŒãŸæ•°å€¤ãŒæ­£ã—ãã‚ã‚Šã¾ã›ã‚“ã€‚å…¥åŠ›ã‚’ã‚„ã‚Šç›´ã—ã¦ãã ã•ã„ã€‚" );
 					continue;
 				}else if( num < columnlist.size() ){
 					if( k > 0 ){
 						sql += ",";
-						selectcolumn += "A";
+						selectcolumn += "ã€";
 						
 					}
 					sql += " " + truecolumnlist.get( num ) + " ";
 					selectcolumn += columnlist.get( num );
-					//columnlistAtruecolumnlist‚Í—v‘f”Ô†‚ª‘Î‰‚µ‚Ä‚¢‚é‚Ì‚ÅA—¼•û‚Æ‚à“¯‚¶”Ô†‚Åremove‚µ‚Ü‚·B
+					//columnlistã€truecolumnlistã¯è¦ç´ ç•ªå·ãŒå¯¾å¿œã—ã¦ã„ã‚‹ã®ã§ã€ä¸¡æ–¹ã¨ã‚‚åŒã˜ç•ªå·ã§removeã—ã¾ã™ã€‚
 					columnlist.remove( num );
 					truecolumnlist.remove( num );
 				}else if( num == columnlist.size() ){
-					System.out.println( "ŒŸõğŒ‚Ì’Ç‰Á‚ğI—¹‚µAŒ‹‰Ê‚ğ•\¦‚µ‚Ü‚·B" );
+					System.out.println( "æ¤œç´¢æ¡ä»¶ã®è¿½åŠ ã‚’çµ‚äº†ã—ã€çµæœã‚’è¡¨ç¤ºã—ã¾ã™ã€‚" );
 					searchloop = false;
 					break;
 				}
 				
 				
 			}catch( NumberFormatException e ){
-				System.out.println( "”’lˆÈŠO‚ª“ü—Í‚³‚ê‚Ü‚µ‚½B“ü—Í‚ğ‚â‚è’¼‚µ‚Ä‚­‚¾‚³‚¢B" );
+				System.out.println( "æ•°å€¤ä»¥å¤–ãŒå…¥åŠ›ã•ã‚Œã¾ã—ãŸã€‚å…¥åŠ›ã‚’ã‚„ã‚Šç›´ã—ã¦ãã ã•ã„ã€‚" );
 				continue;
 			}catch( IOException e ){
-				System.out.println( "“ü—ÍƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½B“ü—Í‚ğ‚â‚è’¼‚µ‚Ä‚­‚¾‚³‚¢B" );
+				System.out.println( "å…¥åŠ›ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚å…¥åŠ›ã‚’ã‚„ã‚Šç›´ã—ã¦ãã ã•ã„ã€‚" );
 				continue;
 			}
 			k++;
 		}
-		windowNo = TOPMENU;
-		//ÅŒã‚Ésql•¶‚Ì•¶––‚ğ•t‚¯‰Á‚¦Asql‚ğ•Ô‚µ‚Ü‚·B
+		windowNo = TOP_MENU;
+		//æœ€å¾Œã«sqlæ–‡ã®æ–‡æœ«ã‚’ä»˜ã‘åŠ ãˆã€sqlã‚’è¿”ã—ã¾ã™ã€‚
 		sql += "FROM soft";
 		return sql;
 	}
 
 	//--------------------------------------------
-	// ƒf[ƒ^ŒŸõ‰æ–Ê
-	// ŒŸõ‚·‚éƒJƒ‰ƒ€‚ğƒ†[ƒU[‚Éw’è‚µ‚Ä‚à‚ç‚¤
+	// ãƒ‡ãƒ¼ã‚¿æ¤œç´¢ç”»é¢
+	// æ¤œç´¢ã™ã‚‹ã‚«ãƒ©ãƒ ã‚’ãƒ¦ãƒ¼ã‚¶ãƒ¼ã«æŒ‡å®šã—ã¦ã‚‚ã‚‰ã†
 	//
-	//@Author yakitori21 2016/6/9
+	//@author yakitori21 2016/6/9
 	//--------------------------------------------
 	/*public void SearchData(){
 		String line;
 		ArrayList<String> list = new ArrayList<String>();
-		this.resultsetmetadata = connect.getMetaData();	// ƒJƒ‰ƒ€î•ñ‚ğæ“¾
+		this.resultsetmetadata = connect.getMetaData();	// ã‚«ãƒ©ãƒ æƒ…å ±ã‚’å–å¾—
 		
-		// ƒJƒ‰ƒ€ƒf[ƒ^‚ğ“o˜^
+		// ã‚«ãƒ©ãƒ ãƒ‡ãƒ¼ã‚¿ã‚’ç™»éŒ²
 		for(int i=1;i<=this.getColumnCount();i++){
 			String columnName = this.resultsetmetadata.getColumnName(i);
 			list.add(columnName);
 		}
 		
-		// ƒ†[ƒU[“ü—Í
+		// ãƒ¦ãƒ¼ã‚¶ãƒ¼å…¥åŠ›
 		while((line = reader.readLine())!=null){
 			
 
-			// “ü—ÍˆÄ“à
-			System.out.println("ˆÈ‰º‚©‚çŒŸõ‚·‚é”Ô†‚ğ‘I‚Ñ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B");
+			// å…¥åŠ›æ¡ˆå†…
+			System.out.println("ä»¥ä¸‹ã‹ã‚‰æ¤œç´¢ã™ã‚‹ç•ªå·ã‚’é¸ã³å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚");
 			for(int i=0;i<list.size();i++){
 				System.out.print(i+":"+list.get()+"\t");
 			}
@@ -358,86 +376,113 @@ public class Control{
 	}*/
 	
 	//--------------------------------------
-	// “ü—Í’l‚Ì®‡«‚ğŠm”F‚·‚é
+	// å…¥åŠ›å€¤ã®æ•´åˆæ€§ã‚’ç¢ºèªã™ã‚‹
 	//@author yakitori21 2016/6/4
-	//@editer yakitori21 2016/6/9
-	// ˆø”		column : ŒŸõ‚·‚éƒJƒ‰ƒ€–¼
-	// 			st	   : ŒŸõ‚·‚é‘ÎÛ•¶š—ñ
+	//@editor yakitori21 2016/6/9
+	// å¼•æ•°		column : æ¤œç´¢ã™ã‚‹ã‚«ãƒ©ãƒ å
+	// 			st	   : æ¤œç´¢ã™ã‚‹å¯¾è±¡æ–‡å­—åˆ—
 	//--------------------------------------
 	public boolean chkConsistency(String column,String st){
 		boolean chk = false;
-		if(column.equals("ID")){		// ¤•iID
-			chk = st.matches("A[0-9]{4}");	// A‚Æ(0`9)‚Ì4•¶š\¬
-		}else if(column.equals("NAME")){		// ¤•i–¼
-			chk = st.matches(".{1,30}");	// 1•¶šˆÈã30•¶šˆÈ‰º
-		}else if(column.equals("YOMI")){		// ¤•i–¼ƒˆƒ~
-			chk = st.matches("[ƒ@-ƒ–¡-ß]{1,30}"); // ‘SŠpƒJƒ^ƒJƒi‚Ü‚½‚Í”¼Šp‚Å1•¶šˆÈã30•¶šˆÈ‰º
-		}else if(column.equals("PRICE")){	// ‰¿Ši
+		if(column.equals("ID")){		// å•†å“ID
+			chk = st.matches("A[0-9]{4}");	// Aã¨(0ï½9)ã®4æ–‡å­—æ§‹æˆ
+			if(!chk){
+				System.out.println("å…¥åŠ›ä¾‹ A0010 Aã¨(0ï½9)ã®4æ–‡å­—æ§‹æˆã§å…¥åŠ›ã—ã¦ãã ã•ã„");
+			}
+		}else if(column.equals("NAME")){		// å•†å“å
+			chk = st.matches(".{1,30}");	// 1æ–‡å­—ä»¥ä¸Š30æ–‡å­—ä»¥ä¸‹
+			if(!chk){
+				System.out.println("1æ–‡å­—ä»¥ä¸Š30æ–‡å­—ä»¥ä¸‹ã§å…¥åŠ›ã—ã¦ãã ã•ã„");
+			}
+		}else if(column.equals("YOMI")){		// å•†å“åãƒ¨ãƒŸ
+			chk = st.matches("[^0-9a-zA-Zã-ã‚ä¸€-é¾ ]{1,30}"); // è¨˜å·ã¾ãŸã¯å…¨è§’ã€åŠè§’ã‚«ã‚¿ã‚«ãƒŠã§1æ–‡å­—ä»¥ä¸Š30æ–‡å­—ä»¥ä¸‹
+			if(!chk){
+				System.out.println("è¨˜å·ã¾ãŸã¯å…¨è§’ã€åŠè§’ã‚«ã‚¿ã‚«ãƒŠã§1æ–‡å­—ä»¥ä¸Š30æ–‡å­—ä»¥ä¸‹ã§å…¥åŠ›ã—ã¦ãã ã•ã„");
+			}
+		}else if(column.equals("PRICE")){	// ä¾¡æ ¼
 			int input = ChgInt(st);
-			chk = (input <= 50000);	// 50000‰~ˆÈã‚Í“o˜^•s‰Â
+			chk = (input >= 0 && input <= 50000);	// 0å††ä»¥ä¸Š50000å††ä»¥ä¸‹
+			if(!chk){
+				System.out.println("0å††ä»¥ä¸Š50000å††ä»¥ä¸‹ã®æ•°å€¤ã§å…¥åŠ›ã—ã¦ãã ã•ã„");
+			}
 		}else if(column.equals("GENRE")){
+			chk = st.matches(".{1,10}");	// 1æ–‡å­—ä»¥ä¸Š10æ–‡å­—ä»¥ä¸‹
+			if(!chk){
+				System.out.println("1æ–‡å­—ä»¥ä¸Š10æ–‡å­—ä»¥ä¸‹ã§å…¥åŠ›ã—ã¦ãã ã•ã„");
+			}
+		}else if(column.equals("RELE")){	// timeãƒ¡ã‚½ãƒƒãƒ‰ã«ãƒ‡ãƒ¼ã‚¿ã‚’å…¥ã‚Œã¦ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆãŒé–“é•ã£ã¦ã„ãŸã‚‰ã¯ã˜ã(â€»)
+			chk = st.matches("20[0-9]{2}-[1]*[0-9]-[1-3]*[0-9]");
+			if(!chk){
+				System.out.println("ä¾‹:2019-10-30ã®ã‚ˆã†ã«å¹´å·-æœˆ-æ—¥ã®å½¢å¼ã§å…¥åŠ›ã—ã¦ãã ã•ã„");
+			}
+		}else if(column.equals("PLTF")){	// 1æ–‡å­—ä»¥ä¸Š10æ–‡å­—ä»¥ä¸‹
 			chk = st.matches(".{1,10}");
-		}else if(column.equals("RELE")){	// timeƒƒ\ƒbƒh‚Éƒf[ƒ^‚ğ“ü‚ê‚ÄƒtƒH[ƒ}ƒbƒg‚ªŠÔˆá‚Á‚Ä‚¢‚½‚ç‚Í‚¶‚­(¦)
-			chk = st.matches("20[0-9]{2}/[1]*[0-9]/[1-3]*[0-9]");
-		}else if(column.equals("PLTF")){
+			if(!chk){
+				System.out.println("1æ–‡å­—ä»¥ä¸Š10æ–‡å­—ä»¥ä¸‹ã§å…¥åŠ›ã—ã¦ãã ã•ã„");
+			}
+		}else if(column.equals("CODI")){	// 1æ–‡å­—ä»¥ä¸Š10æ–‡å­—ä»¥ä¸‹
 			chk = st.matches(".{1,10}");
-		}else if(column.equals("CODI")){
-			chk = st.matches(".{1,10}");
+			if(!chk){
+				System.out.println("1æ–‡å­—ä»¥ä¸Š10æ–‡å­—ä»¥ä¸‹ã§å…¥åŠ›ã—ã¦ãã ã•ã„");
+			}
 		}else if(column.equals("STOCK")){
 			int input = ChgInt(st);
-			chk = (input <= 100);	// İŒÉ100ˆÈã‚Í“o˜^•s‰Â
+			chk = (input >= 0 && input < 100);	// åœ¨åº«100ä»¥ä¸Šã¯ç™»éŒ²ä¸å¯
+			if(!chk){
+				System.out.println("0ä»¥ä¸Š99ä»¥ä¸‹ã®æ•°å€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„");
+			}
 		}
 		return chk;
 	}
 
 	//--------------------------------------------------
-	// ƒJƒ‰ƒ€–¼‚ğ•\¦—p‚ÌV‚µ‚¢–¼‘O‚É•Ï‚¦‚é
+	// ã‚«ãƒ©ãƒ åã‚’è¡¨ç¤ºç”¨ã®æ–°ã—ã„åå‰ã«å¤‰ãˆã‚‹
 	// 
 	//@author yakitori21 2016/6/9
-	//ˆø”	st	:	ƒJƒ‰ƒ€–¼
-	//–ß‚è’l	:	V‚µ‚¢–¼‘O
+	//å¼•æ•°	st	:	ã‚«ãƒ©ãƒ å
+	//æˆ»ã‚Šå€¤	:	æ–°ã—ã„åå‰
 	//---------------------------------------------------
 	public String relabelString( String st ){
 		String res_st = "";
 		if(st.equals("ID")){
-			res_st = "¤•iID";
+			res_st = "å•†å“ID";
 		}else if(st.equals("NAME")){
-			res_st = "¤•i–¼";
+			res_st = "å•†å“å";
 		}else if(st.equals("YOMI")){
-			res_st = "ƒˆƒ~ƒKƒi";
+			res_st = "ãƒ¨ãƒŸã‚¬ãƒŠ";
 		}else if(st.equals("PRICE")){
-			res_st = "‰¿Ši";
+			res_st = "ä¾¡æ ¼";
 		}else if(st.equals("GENRE")){
-			res_st = "ƒWƒƒƒ“ƒ‹";
+			res_st = "ã‚¸ãƒ£ãƒ³ãƒ«";
 		}else if(st.equals("RELE")){
-			res_st = "ƒŠƒŠ[ƒX";
+			res_st = "ãƒªãƒªãƒ¼ã‚¹";
 		}else if(st.equals("PLTF")){
-			res_st = "ƒvƒ‰ƒbƒgƒtƒH[ƒ€";
+			res_st = "ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ";
 		}else if(st.equals("CODI")){
-			res_st = "ó‘Ô";
+			res_st = "çŠ¶æ…‹";
 		}else if(st.equals("STOCK")){
-			res_st = "İŒÉ";
+			res_st = "åœ¨åº«";
 		}
 		return res_st;
 	}
 
 	//-----------------------------------
-	// ƒf[ƒ^ƒx[ƒX‚Ì–Œãˆ—
-	// ƒf[ƒ^ƒx[ƒX‚ÌŠJ•úˆ—‚ğŒÄ‚Ño‚·
+	// ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã®äº‹å¾Œå‡¦ç†
+	// ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã®é–‹æ”¾å‡¦ç†ã‚’å‘¼ã³å‡ºã™
 	//
 	//@author yakitori21 2016/6/9
 	//------------------------------------
 	public void closeDatabase(){
-		connect.connectClose();	// ƒf[ƒ^ƒx[ƒXØ’f
+		connect.connectClose();	// ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹åˆ‡æ–­
 	}
 
 	//------------------------------------
-	// •¶š—ñŒ^‚Ì®”Œ^‚É•ÏŠ·
-	// —áŠO‹Lq‚ÌÈ—ª
+	// æ–‡å­—åˆ—å‹ã®æ•´æ•°å‹ã«å¤‰æ›
+	// ä¾‹å¤–è¨˜è¿°ã®çœç•¥
 	//
 	//@author yaktiori212016/6/9
-	//ˆø”	st	:	•ÏŠ·‚·‚é•¶š—ñ
-	//–ß‚è’l	:	•ÏŠ·Œã‚Ì®”
+	//å¼•æ•°	st	:	å¤‰æ›ã™ã‚‹æ–‡å­—åˆ—
+	//æˆ»ã‚Šå€¤	:	å¤‰æ›å¾Œã®æ•´æ•°
 	//------------------------------------
 	public static int ChgInt(String st){
 		try{
@@ -451,7 +496,7 @@ public class Control{
 	/*
 	--------------------------------------------
 	@author testakaunto 2016/6/10
-	ƒf[ƒ^‚ğXV‚·‚éSQL•¶‚ğì¬‚·‚éƒƒ\ƒbƒh
+	ãƒ‡ãƒ¼ã‚¿ã‚’æ›´æ–°ã™ã‚‹SQLæ–‡ã‚’ä½œæˆã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰
 	--------------------------------------------
 	*/
 	
@@ -470,75 +515,78 @@ public class Control{
 		List<String> columnlist = new ArrayList<String>();
 		List<String> truecolumnlist = new ArrayList<String>();
 		
-		//columnlist‚É•\¦—p‚ÌƒJƒ‰ƒ€–¼‚ğ“ü‚ê‚Ü‚·B
-		columnlist.add( "¤•iID" );
-		columnlist.add( "¤•i–¼" );
-		columnlist.add( "ƒˆƒ~ƒKƒi" );
-		columnlist.add( "‰¿Ši" );
-		columnlist.add( "ƒWƒƒƒ“ƒ‹" );
-		columnlist.add( "”­”„“ú" );
-		columnlist.add( "ƒvƒ‰ƒbƒgƒtƒH[ƒ€" );
-		columnlist.add( "ó‘Ô" );
-		columnlist.add( "İŒÉ" );
+		//columnlistã«è¡¨ç¤ºç”¨ã®ã‚«ãƒ©ãƒ åã‚’å…¥ã‚Œã¾ã™ã€‚
+		columnlist.add( "å•†å“ID" );
+		columnlist.add( "å•†å“å" );
+		columnlist.add( "ãƒ¨ãƒŸã‚¬ãƒŠ" );
+		columnlist.add( "ä¾¡æ ¼" );
+		columnlist.add( "ã‚¸ãƒ£ãƒ³ãƒ«" );
+		columnlist.add( "ç™ºå£²æ—¥" );
+		columnlist.add( "ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ " );
+		columnlist.add( "çŠ¶æ…‹" );
+		columnlist.add( "åœ¨åº«" );
 		
-		//truecolumnlist‚ÉÀÛ‚ÌƒJƒ‰ƒ€–¼‚ğ“ü‚ê‚Ü‚·B
+		//truecolumnlistã«å®Ÿéš›ã®ã‚«ãƒ©ãƒ åã‚’å…¥ã‚Œã¾ã™ã€‚
 		for( int l = 1 ; l < resultsetmetadata.getColumnCount() + 1 ; l++ ){
 			truecolumnlist.add( resultsetmetadata.getColumnName(l) );
 		}
 		
-		for( int i = 0 ; i < columnlist.size() ; i++ ){//•\¦—pƒJƒ‰ƒ€–¼‚ğ”š‚ğ•t‚¯‚Ä•\¦‚µ‚Ü‚·
-				System.out.println( "" + i + "F" + columnlist.get(i));
+		for( int i = 0 ; i < columnlist.size() ; i++ ){//è¡¨ç¤ºç”¨ã‚«ãƒ©ãƒ åã‚’æ•°å­—ã‚’ä»˜ã‘ã¦è¡¨ç¤ºã—ã¾ã™
+				System.out.println( "" + i + "ï¼š" + columnlist.get(i));
 			}
 		
 		
 		while( idloop ){
 			try{
-				System.out.println( "XV‚µ‚½‚¢ƒf[ƒ^‚Ì¤•iID‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B" );
+				System.out.println( "æ›´æ–°ã—ãŸã„ãƒ‡ãƒ¼ã‚¿ã®å•†å“IDã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚" );
 				id = reader.readLine();
 				idloop = chkConsistency( "ID" , id );
-				//id“ü—Í‚ª³‚µ‚¢‚©ƒ`ƒFƒbƒN
+				//idå…¥åŠ›ãŒæ­£ã—ã„ã‹ãƒã‚§ãƒƒã‚¯
 				if( idloop != true ){
-					System.out.println( "“ü—Í‚µ‚½’l‚ª³‚µ‚­‚ ‚è‚Ü‚¹‚ñB" );
+					System.out.println( "å…¥åŠ›ã—ãŸå€¤ãŒæ­£ã—ãã‚ã‚Šã¾ã›ã‚“ã€‚" );
 					continue;
 				}
 				connect.setSql("SELECT ID FROM soft");
 				resultset = connect.getResultSet();
-				//w’è‚µ‚½ID‚ªƒe[ƒuƒ‹ã‚É‘¶İ‚·‚é‚©ƒ`ƒFƒbƒN
+				//æŒ‡å®šã—ãŸIDãŒãƒ†ãƒ¼ãƒ–ãƒ«ä¸Šã«å­˜åœ¨ã™ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
 				while( resultset.next() ){
 					String iddata = resultset.getString( "ID" );
 					if( !id.equals( iddata ) ){
-						System.out.println( "‘¶İ‚µ‚È‚¢ƒf[ƒ^‚Å‚·B" );
+						System.out.println( "å­˜åœ¨ã—ãªã„ãƒ‡ãƒ¼ã‚¿ã§ã™ã€‚" );
 						break;
 					}
 				
 				}
 			}catch( IOException e ){
-				System.out.println( "“ü—ÍƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½" );
+				System.out.println( "å…¥åŠ›ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ" );
 				continue;
 			}
 		}
 		connect.setSql("SELECT * FROM soft2");
-		System.out.println( "Ÿ‚ÉXV‚·‚éƒf[ƒ^€–Ú‚ğ‘I‘ğ‚µA”š‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B" );
+		System.out.println( "æ¬¡ã«æ›´æ–°ã™ã‚‹ãƒ‡ãƒ¼ã‚¿é …ç›®ã‚’é¸æŠã—ã€æ•°å­—ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚" );
 		while( columnloop ){
 			try{
-				for( int i = 0 ; i < columnlist.size() ; i++ ){//•\¦—pƒJƒ‰ƒ€–¼‚ğ”š‚ğ•t‚¯‚Ä•\¦‚µ‚Ü‚·
-					System.out.println( "" + i + "F" + columnlist.get(i) );
+				for( int i = 0 ; i < columnlist.size() ; i++ ){//è¡¨ç¤ºç”¨ã‚«ãƒ©ãƒ åã‚’æ•°å­—ã‚’ä»˜ã‘ã¦è¡¨ç¤ºã—ã¾ã™
+					System.out.println( "" + i + "ï¼š" + columnlist.get(i) );
 				}
 				String strnum = reader.readLine();
 				int num = Integer.parseInt( strnum );
 				column = " " + truecolumnlist.get(i) + " ";
 			}catch( IOException e ){
-				System.out.println( "“ü—ÍƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½" );
+				System.out.println( "å…¥åŠ›ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ" );
 				continue;
 			}catch( NumberFormatException e ){
-				System.out.println( "”’lˆÈŠO‚ª“ü—Í‚³‚ê‚Ü‚µ‚½B“ü—Í‚ğ‚â‚è’¼‚µ‚Ä‚­‚¾‚³‚¢B" );
+				System.out.println( "æ•°å€¤ä»¥å¤–ãŒå…¥åŠ›ã•ã‚Œã¾ã—ãŸã€‚å…¥åŠ›ã‚’ã‚„ã‚Šç›´ã—ã¦ãã ã•ã„ã€‚" );
 				continue;
 			}
 		}
-		System.out.println( "ÅŒã‚Éƒf[ƒ^‚Ì’l‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B" );
+		System.out.println( "æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã®å€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚" );
 		
 		sql += column + "=" data + "WHERE ID =" + id;
 	}
 	
+}
+
+
 }
 
