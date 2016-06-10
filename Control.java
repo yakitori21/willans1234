@@ -3,36 +3,49 @@ package control;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.*;
-/*import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;*/
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-
 import main.ItemManageMain;
-//import connect.Connect2;
 import connect.Connect3;
-
 
 /*
 @author testakaunto 2016/6/3
 @editer yakitori21	2016/6/4
 @editor testakaunto 2016/6/7
+@editer yakitori21	2016/6/9
 @editor testakaunto 2016/6/9
 */
 
+//@editor testakaunto 2016/6/9
+//ResultSetMetaData resultsetmetadata -> 変数名resultsetmetadataに変更
 public class Control{
+	/* フィールド */
+	private ResultSetMetaData resultsetmetadata;	// データベースのカラム情報を持つ
+	private ItemManageMain main;	// 終了フラグ制御するインスタンス
+	private BufferedReader reader;	// 標準入力用
+	private int windowNo;			// 表示する画面番号
+	private Connect3 connect;		// 通信モジュール
+
+	/*
+	------------------------------------------------------------
+	@editor testakaunto 2016/6/9
+	search()の追加により、各メソッドにthrows SQLExceptionを追加
+	------------------------------------------------------------
+	*/
+
+
 	//-----------------------------------------------------------------------
 	// コンストラクタ
 	//
 	//@author yakitori21 2016/6/4
 	// 引数	m_ins :	メインループの終了フラグを制御するためのインスタンス
 	// 		c_ins : データベース情報を取得する為の通信クラスのインスタンス
+	//@editor testakaunto 2016/6/9
 	//-----------------------------------------------------------------------
 	public Control(ItemManageMain m_ins/*,Connect c_ins*/){
-		// 標準入力オブジェクトRを作成
+		// 標準入力オブジェクトを作成
 		this.reader = new BufferedReader(new InputStreamReader(System.in));
 		this.windowNo = TOPMENU; // トップメニューの番号を設定。
 
@@ -40,20 +53,10 @@ public class Control{
 		this.main = m_ins;		// メインクラス
 		this.connect = new Connect3();	// データベース通信クラス
 		
-		// データベース情報を取得
-		//this.rs = con.getメソッド(仮)
-		//this.rsmd = con.getメソッド(仮)
+		// インスタンス初期化
+		this.resultsetmetadata = null;		// ResultSetMetaDataを初期化
 	}
 	
-	/* フィールド */
-
-	//private ResultSet rs;			// データベースの内部情報を持つ
-	//private ResultSetMetaData rsmd;	// データベースのカラム情報を持つ
-	//private Connect con;			// データベース情報を取得する為のインスタンス
-	private ItemManageMain main;	// 終了フラグ制御するインスタンス
-	private BufferedReader reader;	// 標準入力用
-	private int windowNo;			// 表示する画面番号
-	private Connect3 connect;
 	/* 定数 */
 
 	// 画面操作
@@ -69,14 +72,17 @@ public class Control{
 	
 	/* メソッド */
 	
-	//----------------------------------------
+	//-------------------------------------------------------
 	// 画面番号に応じて表示を分ける
 	// メインループがこのメソッドを呼び出し
 	// 画面を更新する
 	//
 	//@author yakitori21 2016/6/4
-	//----------------------------------------
-	public void changeWinodow() throws SQLException {
+	//@editor testakaunto 2016/6/10
+	//case SERACHのsearch()にSQL文を受けるString sqlと
+	//connectDB()、TOPMENUに戻る処理を追加
+	//-------------------------------------------------------
+	public void changeWindow() throws SQLException , IOException {
 		// 画面番号をもとに画面を呼び出す。
 		switch(this.windowNo){
 			case TOPMENU:	// トップメニュー 
@@ -86,7 +92,14 @@ public class Control{
 				this.selectTable();
 				break;
 			case ADD_DATA:	// データ追加画面
+				System.out.println( "*****テーブル名が変更されているか注意してください！！*****" );
 				this.addData();
+				break;
+			case SERACH:
+				String sql = this.search();
+				connect.setSql( sql );
+				connect.connectDB();
+				
 				break;
 			default:
 				System.out.println("Error:画面遷移異常によりシステムを終了します。");
@@ -100,10 +113,10 @@ public class Control{
 	// 
 	//@author yakitori21 2016/6/4
 	//@editor testakaunto 2016/6/7
-	//case ALL_DRAW でConnect3を呼び出し
+	//case ALL_DRAW でConnect2を呼び出し
 	//sqlをセットするコードを追加
 	//---------------------------------
-	public void topMenu() throws SQLException {
+	public void topMenu() {
 		String line = "";	// 標準入力を受け取る変数
 		System.out.println();
 		System.out.println( "メニューを選んでください。" );
@@ -122,7 +135,6 @@ public class Control{
 					this.main.setLoopEnd();
 					break;
 				}
-				
 
 				// 入力制限[0-3]
 				if(line.matches("[0-3]")){
@@ -134,18 +146,15 @@ public class Control{
 							break;
 						case ALL_DRAW: 	// テーブルの商品を全て表示する
 							String sql = "SELECT * FROM soft;";
-							System.out.println( sql );
-							this.connect.setSql( sql );	// 通信クラスにSQL文をセット
+							System.out.println(sql);
+							this.connect.setSql(sql);	// 通信クラスにSQL文をセット
 							this.connect.connectDB();	// データベースにSQL文を送信
 							break;
 						case ADD:	// 追加機能
-							//this.windowNo = ADD_DATA;	// 画面変更
+							this.windowNo = ADD_DATA;	// 画面変更
 							break;
-						case SERACH: // 抽出・検索機能-未実装(※)
-							sql = search();
-							System.out.println( sql );
-							this.connect.setSql( sql );
-							this.connect.connectDB();
+						case SERACH: // 抽出・検索機能
+							this.windowNo = SERACH;		// 画面変更
 							break;
 						default:	// 事前に弾いてるけど一応
 							break;
@@ -155,7 +164,7 @@ public class Control{
 					System.out.println("入力値が正しくありません。0-3の数値を入力してください");
 				}
 			}catch(NumberFormatException e){
-				//System.out.println(e);
+				System.out.println(e);
 			}catch(IOException e){
 				System.out.println(e);
 			}
@@ -192,44 +201,31 @@ public class Control{
 	// ユーザーが入力を行い、入力データをデータベースに登録する。
 	// 内部で入力データを作成しConnectオブジェクトに送信する
 	//@author yakitori21 2016/6/4
+	//@editer yakitori21 2016/6/9
 	//-------------------------------------------------------------
-	public void addData(){
-		String line = "";			// 標準入力
-		String columnName = "";		// カラム名
-		String sql = "INSERT INTO soft VALUES(";
+	public void addData() throws SQLException , IOException {
+		String sql = "INSERT INTO soft2 VALUES(";
 		System.out.println("Itemテーブルにデータを追加します。");
 		System.out.println("");
 
-		try{
-			while(true){
-				line = reader.readLine();
-				if(line == null){	// ユーザーが入力をキャンセル
-					System.out.println("入力がキャンセルされました。トップメニューへ移動します");
-					windowNo = TOPMENU;
-				}
-				System.out.println("入力を確認しました。トップメニューに戻ります");
-				windowNo = TOPMENU;
-				break;
-			}
-		}catch(IOException e){
-			System.out.println(e);
-		}
+		resultsetmetadata = connect.getMetaData();	// カラム情報を取得
+		
 		// カラム名を取得
-		/*label:	// ラベルbreak
-		for (int i = 1; i <= this.rsmd.getColumnCount(); i++) {
-			columnName = this.rsmd.getColumnName(i);
-   			System.out.println("カラム名:"+columnName+"に追加するデータを入力してください");
+		label:	// ラベルbreak
+		for (int i=1; i<=this.resultsetmetadata.getColumnCount(); i++){
+			String columnName = this.resultsetmetadata.getColumnName(i);
+			System.out.println("カラム名:"+relabelString(columnName)+"に追加するデータを入力してください");
 			
 			// 適切なデータを入力しないかぎり繰り返す
 			while(true){
-				line = reader.readLine();
+				String line = reader.readLine();
 				if(line == null){	// ユーザーが入力をキャンセル
 					System.out.println("入力がキャンセルされました。トップメニューへ移動します");
 					windowNo = TOPMENU;
 					break label;	// ラベルbreakでfor文自体を脱出。
 				}
 				if(this.chkConsistency(columnName,line)){	// 文字入力が正しいか？
-					if(i!=rsmd.getColumnCount()){	// 最後のカラム入力でないなら
+					if(i!=resultsetmetadata.getColumnCount()){	// 最後のカラム入力でないなら
 						sql = "\'"+line+"\' ,";
 					}else{
 						sql = "\'"+line+"\'";
@@ -239,42 +235,11 @@ public class Control{
 			}
 		}
 		sql = sql+");";	// SQL文の終端を設定 
-		*/
-	}
-	
-	//--------------------------------------
-	// 入力値の整合性を確認する-未完成(※)
-	//@author yakitori21 2016/6/4
-	// 引数		colum : 検索するカラム名
-	// 			st	  : 検索する対象文字列
-	//--------------------------------------
-	public boolean chkConsistency(String colum,String st){
-		boolean chk = false;
-		if(colum == "ID"){		// 商品ID
-			chk = st.matches("A[0-9]{4}");	// Aと(0～9)の4文字構成
-		}else if(colum == "NAME"){		// 商品名
-			chk = st.matches(".{1,30}");	// 1文字以上30文字以下
-		}else if(colum == "YOMI"){		// 商品名ヨミ
-			chk = st.matches("[ァ-ヶ｡-ﾟ]{1,30}"); // 全角カタカナまたは半角で1文字以上30文字以下
-		}else if(colum == "PRICE"){	// 価格
-			try{
-				int input = Integer.parseInt(st);
-				chk = (st.matches("[1-5]*[0-9]{1,4}") && (input <= 50000) );	// 50000円以上は登録不可
-			}catch(NumberFormatException e){
-				System.out.println(e);
-			}
-		}else if(colum == "GENRE"){
-			chk = st.matches(".{1,10}");
-		}else if(colum == "RELE"){
-			chk = st.matches("20[0-9]{2}/[1]*[1-9]/[1-3]*[1-9]");
-		}else if(colum == "PLTF"){
-		}else if(colum == "CODI"){
-		}else if(colum == "STOCK"){
-		}
-		return chk;
+		System.out.println(sql);
+		/*this.connect.setSql(sql);
+		this.connect.connectDB();*/
 	}
 
-	
 	/*
 	--------------------------------------------------
 	@author testakaunto 2016/6/8
@@ -289,11 +254,13 @@ public class Control{
 		boolean searchloop = true;
 		String sql = "SELECT";
 		String selectcolumn = "選択した項目：";
-		ResultSet resultset = connect.getResultSet();
-		ResultSetMetaData resultsetmetadata = connect.getMetaData();
+		//ResultSet resultset = connect.getResultSet();
+		resultsetmetadata = connect.getMetaData();
+		//表示用のカラム名を入れるcolumnlistと実際のカラム名を入れるtruecolumnlistを作成
 		List<String> columnlist = new ArrayList<String>();
 		List<String> truecolumnlist = new ArrayList<String>();
 		
+		//columnlistに表示用のカラム名を入れます。
 		columnlist.add( "商品ID" );
 		columnlist.add( "商品名" );
 		columnlist.add( "ヨミガナ" );
@@ -304,24 +271,27 @@ public class Control{
 		columnlist.add( "状態" );
 		columnlist.add( "在庫" );
 		
+		//truecolumnlistに実際のカラム名を入れます。
 		for( int l = 1 ; l < resultsetmetadata.getColumnCount() + 1 ; l++ ){
 			truecolumnlist.add( resultsetmetadata.getColumnName(l) );
 		}
-		
+		//終了を選択するとループを抜けます。
 		while( searchloop ){
-			if( k < 1 ){
+			if( k < 1 ){//ループが1回目かどうかで表示を変えます
 				System.out.println( "抽出するデータの項目を選び、数字を入力してください。" );
 			}else{
 				System.out.println("他に抽出するデータ項目があれば、数字を入力してください。");
-				System.out.println( selectcolumn );
+				System.out.println( selectcolumn );//既に選択したデータを表示します。
 			}
-			for( int i = 0 ; i < columnlist.size() ; i++ ){
+			for( int i = 0 ; i < columnlist.size() ; i++ ){//表示用カラム名を数字を付けて表示します
 				System.out.println( "" + i + "：" + columnlist.get(i));
 			}
-			System.out.println( "" + columnlist.size() + "：" + "＜終了＞" );
+			//終了は最後のカラム名に表示します。
+			System.out.println( "" + columnlist.size() + "：" + "＜選択終了＞" );
 			try{
 				String str = reader.readLine();
 				int num = Integer.parseInt( str );
+				//入力チェックをしながらsqlにカラム名を追加します。
 				if( num < 0 || num > columnlist.size() ){
 					System.out.println( "入力された数値が正しくありません。入力をやり直してください。" );
 					continue;
@@ -333,6 +303,7 @@ public class Control{
 					}
 					sql += " " + truecolumnlist.get( num ) + " ";
 					selectcolumn += columnlist.get( num );
+					//columnlist、truecolumnlistは要素番号が対応しているので、両方とも同じ番号でremoveします。
 					columnlist.remove( num );
 					truecolumnlist.remove( num );
 				}else if( num == columnlist.size() ){
@@ -351,8 +322,223 @@ public class Control{
 			}
 			k++;
 		}
-		
+		windowNo = TOPMENU;
+		//最後にsql文の文末を付け加え、sqlを返します。
 		sql += "FROM soft";
 		return sql;
 	}
+
+	//--------------------------------------------
+	// データ検索画面
+	// 検索するカラムをユーザーに指定してもらう
+	//
+	//@Author yakitori21 2016/6/9
+	//--------------------------------------------
+	/*public void SearchData(){
+		String line;
+		ArrayList<String> list = new ArrayList<String>();
+		this.resultsetmetadata = connect.getMetaData();	// カラム情報を取得
+		
+		// カラムデータを登録
+		for(int i=1;i<=this.getColumnCount();i++){
+			String columnName = this.resultsetmetadata.getColumnName(i);
+			list.add(columnName);
+		}
+		
+		// ユーザー入力
+		while((line = reader.readLine())!=null){
+			
+
+			// 入力案内
+			System.out.println("以下から検索する番号を選び入力してください。");
+			for(int i=0;i<list.size();i++){
+				System.out.print(i+":"+list.get()+"\t");
+			}
+		}
+	}*/
+	
+	//--------------------------------------
+	// 入力値の整合性を確認する
+	//@author yakitori21 2016/6/4
+	//@editer yakitori21 2016/6/9
+	// 引数		column : 検索するカラム名
+	// 			st	   : 検索する対象文字列
+	//--------------------------------------
+	public boolean chkConsistency(String column,String st){
+		boolean chk = false;
+		if(column.equals("ID")){		// 商品ID
+			chk = st.matches("A[0-9]{4}");	// Aと(0～9)の4文字構成
+		}else if(column.equals("NAME")){		// 商品名
+			chk = st.matches(".{1,30}");	// 1文字以上30文字以下
+		}else if(column.equals("YOMI")){		// 商品名ヨミ
+			chk = st.matches("[ァ-ヶ｡-ﾟ]{1,30}"); // 全角カタカナまたは半角で1文字以上30文字以下
+		}else if(column.equals("PRICE")){	// 価格
+			int input = ChgInt(st);
+			chk = (input <= 50000);	// 50000円以上は登録不可
+		}else if(column.equals("GENRE")){
+			chk = st.matches(".{1,10}");
+		}else if(column.equals("RELE")){	// timeメソッドにデータを入れてフォーマットが間違っていたらはじく(※)
+			chk = st.matches("20[0-9]{2}/[1]*[0-9]/[1-3]*[0-9]");
+		}else if(column.equals("PLTF")){
+			chk = st.matches(".{1,10}");
+		}else if(column.equals("CODI")){
+			chk = st.matches(".{1,10}");
+		}else if(column.equals("STOCK")){
+			int input = ChgInt(st);
+			chk = (input <= 100);	// 在庫100以上は登録不可
+		}
+		return chk;
+	}
+
+	//--------------------------------------------------
+	// カラム名を表示用の新しい名前に変える
+	// 
+	//@author yakitori21 2016/6/9
+	//引数	st	:	カラム名
+	//戻り値	:	新しい名前
+	//---------------------------------------------------
+	public String relabelString( String st ){
+		String res_st = "";
+		if(st.equals("ID")){
+			res_st = "商品ID";
+		}else if(st.equals("NAME")){
+			res_st = "商品名";
+		}else if(st.equals("YOMI")){
+			res_st = "ヨミガナ";
+		}else if(st.equals("PRICE")){
+			res_st = "価格";
+		}else if(st.equals("GENRE")){
+			res_st = "ジャンル";
+		}else if(st.equals("RELE")){
+			res_st = "リリース";
+		}else if(st.equals("PLTF")){
+			res_st = "プラットフォーム";
+		}else if(st.equals("CODI")){
+			res_st = "状態";
+		}else if(st.equals("STOCK")){
+			res_st = "在庫";
+		}
+		return res_st;
+	}
+
+	//-----------------------------------
+	// データベースの事後処理
+	// データベースの開放処理を呼び出す
+	//
+	//@author yakitori21 2016/6/9
+	//------------------------------------
+	public void closeDatabase(){
+		connect.connectClose();	// データベース切断
+	}
+
+	//------------------------------------
+	// 文字列型の整数型に変換
+	// 例外記述の省略
+	//
+	//@author yaktiori212016/6/9
+	//引数	st	:	変換する文字列
+	//戻り値	:	変換後の整数
+	//------------------------------------
+	public static int ChgInt(String st){
+		try{
+			int num = Integer.parseInt(st);
+			return num;
+		}catch(NumberFormatException e){
+			System.out.println(e);
+		}
+		return 0;
+	}
+	/*
+	--------------------------------------------
+	@author testakaunto 2016/6/10
+	データを更新するSQL文を作成するメソッド
+	--------------------------------------------
+	*/
+	
+	public String update() throws SQLException {
+		boolean idloop = true;
+		boolean columnloop = true;
+		boolean dataloop =true;
+		String sql = "UPDATE soft2 SET";
+		String id = "";
+		String column = "";
+		String data = "";
+		
+		connect.setSql("SELECT * FROM soft2");
+		ResultSet resultset = connect.getResultSet();
+		resultsetmetadata = connect.getMetaData();
+		List<String> columnlist = new ArrayList<String>();
+		List<String> truecolumnlist = new ArrayList<String>();
+		
+		//columnlistに表示用のカラム名を入れます。
+		columnlist.add( "商品ID" );
+		columnlist.add( "商品名" );
+		columnlist.add( "ヨミガナ" );
+		columnlist.add( "価格" );
+		columnlist.add( "ジャンル" );
+		columnlist.add( "発売日" );
+		columnlist.add( "プラットフォーム" );
+		columnlist.add( "状態" );
+		columnlist.add( "在庫" );
+		
+		//truecolumnlistに実際のカラム名を入れます。
+		for( int l = 1 ; l < resultsetmetadata.getColumnCount() + 1 ; l++ ){
+			truecolumnlist.add( resultsetmetadata.getColumnName(l) );
+		}
+		
+		for( int i = 0 ; i < columnlist.size() ; i++ ){//表示用カラム名を数字を付けて表示します
+				System.out.println( "" + i + "：" + columnlist.get(i));
+			}
+		
+		
+		while( idloop ){
+			try{
+				System.out.println( "更新したいデータの商品IDを入力してください。" );
+				id = reader.readLine();
+				idloop = chkConsistency( "ID" , id );
+				//id入力が正しいかチェック
+				if( idloop != true ){
+					System.out.println( "入力した値が正しくありません。" );
+					continue;
+				}
+				connect.setSql("SELECT ID FROM soft");
+				resultset = connect.getResultSet();
+				//指定したIDがテーブル上に存在するかチェック
+				while( resultset.next() ){
+					String iddata = resultset.getString( "ID" );
+					if( !id.equals( iddata ) ){
+						System.out.println( "存在しないデータです。" );
+						break;
+					}
+				
+				}
+			}catch( IOException e ){
+				System.out.println( "入力エラーが発生しました" );
+				continue;
+			}
+		}
+		connect.setSql("SELECT * FROM soft2");
+		System.out.println( "次に更新するデータ項目を選択し、数字を入力してください。" );
+		while( columnloop ){
+			try{
+				for( int i = 0 ; i < columnlist.size() ; i++ ){//表示用カラム名を数字を付けて表示します
+					System.out.println( "" + i + "：" + columnlist.get(i) );
+				}
+				String strnum = reader.readLine();
+				int num = Integer.parseInt( strnum );
+				column = " " + truecolumnlist.get(i) + " ";
+			}catch( IOException e ){
+				System.out.println( "入力エラーが発生しました" );
+				continue;
+			}catch( NumberFormatException e ){
+				System.out.println( "数値以外が入力されました。入力をやり直してください。" );
+				continue;
+			}
+		}
+		System.out.println( "最後にデータの値を入力してください。" );
+		
+		sql += column + "=" data + "WHERE ID =" + id;
+	}
+	
 }
+
